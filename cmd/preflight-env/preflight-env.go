@@ -37,6 +37,7 @@ func main() {
 	logLevel := preflightFlags.String("log-level", log.GetLevel().String(), "log level")
 	var envList envVarList
 	preflightFlags.Var(&envList, "e", "enviornment variable to check in the form of KEY=VALUE. if VALUE is omitted, only checks if KEY is set.")
+	configFile := preflightFlags.String("config", "", "path to config file")
 	preflightFlags.Parse(os.Args[1:])
 	ll, err := log.ParseLevel(*logLevel)
 	if err != nil {
@@ -55,6 +56,12 @@ func main() {
 	}
 	pf := &preflightenv.PreflightEnv{
 		EnvVars: envVars,
+	}
+	if *configFile != "" {
+		if pf, err = preflightenv.LoadConfig(*configFile); err != nil {
+			l.WithError(err).Error("error loading config")
+			os.Exit(1)
+		}
 	}
 	if err := pf.Run(); err != nil {
 		l.WithError(err).Error("error running preflight-env")

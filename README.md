@@ -20,6 +20,8 @@ curl -sSL https://raw.githubusercontent.com/robertlestak/preflight-env/main/scri
 
 ```bash
 Usage of preflight-env:
+  -config string
+        path to config file
   -e value
         enviornment variable to check in the form of KEY=VALUE. if VALUE is omitted, only checks if KEY is set.
   -log-level string
@@ -30,4 +32,19 @@ Usage of preflight-env:
 
 ```bash
 preflight-env -e FOO=bar -e BAZ
+```
+
+## Config file
+
+You can also use a config file rather than cli args.
+
+```yaml
+envVars:
+      HELLO: world
+      FOO: bar
+      BAZ: # this will check if BAZ is set, but not its value
+```
+
+```bash
+preflight-env -config config.yaml
 ```
