@@ -8,7 +8,7 @@ import (
 )
 
 type PreflightEnv struct {
-	EnvVars map[string]string
+	EnvVars map[string]string `json:"envVars" yaml:"envVars"`
 }
 
 func (pf *PreflightEnv) Run() error {
