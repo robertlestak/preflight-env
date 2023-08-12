@@ -44,6 +44,7 @@ func main() {
 		ll = log.InfoLevel
 	}
 	log.SetLevel(ll)
+	preflightenv.Logger = l.Logger
 	envVars := make(map[string]string)
 	for _, e := range envList {
 		// split on "=" to get key and value

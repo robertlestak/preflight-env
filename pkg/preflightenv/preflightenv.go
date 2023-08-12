@@ -2,6 +2,7 @@ package preflightenv
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 
@@ -9,12 +10,24 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var (
+	Logger *log.Logger
+)
+
+func init() {
+	if Logger == nil {
+		Logger = log.New()
+		Logger.SetOutput(os.Stdout)
+		Logger.SetLevel(log.InfoLevel)
+	}
+}
+
 type PreflightEnv struct {
 	EnvVars map[string]string `json:"envVars" yaml:"envVars"`
 }
 
 func LoadConfig(filepath string) (*PreflightEnv, error) {
-	l := log.WithFields(log.Fields{
+	l := Logger.WithFields(log.Fields{
 		"fn": "LoadConfig",
 	})
 	l.Debug("loading config")
@@ -36,8 +49,8 @@ func LoadConfig(filepath string) (*PreflightEnv, error) {
 }
 
 func (pf *PreflightEnv) Run() error {
-	l := log.WithFields(log.Fields{
-		"fn": "Run",
+	l := Logger.WithFields(log.Fields{
+		"preflight": "env",
 	})
 	l.Debug("starting preflight-env")
 	for k, v := range pf.EnvVars {
@@ -45,18 +58,20 @@ func (pf *PreflightEnv) Run() error {
 			// checking if env var exists
 			ev := os.Getenv(k)
 			if ev == "" {
-				l.Errorf("env var %s not set", k)
-				return fmt.Errorf("env var %s not set", k)
+				failStr := fmt.Sprintf("failed - expected: %s to exit, got: nil", k)
+				l.Error(failStr)
+				return errors.New(failStr)
 			}
 		} else {
 			// checking if env var is set to correct value
 			ev := os.Getenv(k)
 			if ev != v {
-				l.Errorf("env var %s not set to correct value", k)
-				return fmt.Errorf("env var %s not set to correct value", k)
+				failStr := fmt.Sprintf("failed - expected: %s, got: %s", v, ev)
+				l.Error(failStr)
+				return errors.New(failStr)
 			}
 		}
 	}
-	l.Info("preflight-env completed successfully")
+	l.Info("passed")
 	return nil
 }
