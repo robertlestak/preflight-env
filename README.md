@@ -34,6 +34,14 @@ Usage of preflight-env:
 preflight-env -e FOO=bar -e BAZ
 ```
 
+### Docker example
+
+```bash
+docker run --rm robertlestak/preflight-env \
+      -e FOO=bar \
+      -e BAZ
+```
+
 ## Config file
 
 You can also use a config file rather than cli args.
