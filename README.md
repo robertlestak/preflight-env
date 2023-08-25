@@ -24,6 +24,8 @@ Usage of preflight-env:
         path to config file
   -e value
         enviornment variable to check in the form of KEY=VALUE. if VALUE is omitted, only checks if KEY is set.
+  -equiv
+        print equivalent command
   -log-level string
         log level (default "info")
 ```
