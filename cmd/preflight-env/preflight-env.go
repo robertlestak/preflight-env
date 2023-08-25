@@ -38,6 +38,7 @@ func main() {
 	var envList envVarList
 	preflightFlags.Var(&envList, "e", "enviornment variable to check in the form of KEY=VALUE. if VALUE is omitted, only checks if KEY is set.")
 	configFile := preflightFlags.String("config", "", "path to config file")
+	equiv := preflightFlags.Bool("equiv", false, "print equivalent command")
 	preflightFlags.Parse(os.Args[1:])
 	ll, err := log.ParseLevel(*logLevel)
 	if err != nil {
@@ -56,6 +57,7 @@ func main() {
 		}
 	}
 	pf := &preflightenv.PreflightEnv{
+		Equiv:   *equiv,
 		EnvVars: envVars,
 	}
 	if *configFile != "" {

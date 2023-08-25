@@ -24,6 +24,7 @@ func init() {
 }
 
 type PreflightEnv struct {
+	Equiv   bool              `json:"equivalent" yaml:"equivalent"`
 	EnvVars map[string]string `json:"envVars" yaml:"envVars"`
 }
 
@@ -62,7 +63,7 @@ func (pf *PreflightEnv) Equivalent() {
 	}
 	cmd = strings.TrimSpace(cmd)
 	cmd = fmt.Sprintf("sh -c '%s'", cmd)
-	l.Infof("equivalent command: %s", cmd)
+	fmt.Println(cmd)
 }
 
 func (pf *PreflightEnv) Run() error {
@@ -70,7 +71,10 @@ func (pf *PreflightEnv) Run() error {
 		"preflight": "env",
 	})
 	l.Debug("starting preflight-env")
-	pf.Equivalent()
+	if pf.Equiv {
+		pf.Equivalent()
+		return nil
+	}
 	for k, v := range pf.EnvVars {
 		if v == "" {
 			// checking if env var exists
